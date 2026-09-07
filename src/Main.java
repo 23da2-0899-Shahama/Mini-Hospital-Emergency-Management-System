@@ -1,175 +1,484 @@
+import java.util.Scanner;
+
 public class Main {
+
+    static Scanner scanner = new Scanner(System.in);
+
+    static PatientBST patientBST = new PatientBST();
+    static EmergencyQueue emergencyQueue = new EmergencyQueue();
+    static TreatmentStack treatmentStack = new TreatmentStack();
+
+    // Each patient can have their own visit history
+    static VisitLinkedList[] visitHistories = new VisitLinkedList[1000];
 
     public static void main(String[] args) {
 
-        PatientBST patientBST = new PatientBST();
+        int choice;
 
-        Patient p1 = new Patient(
-                105,
-                "Ahmed",
-                25,
-                "0771234567",
-                "Fever"
+        do {
+
+            displayMainMenu();
+
+            choice = getIntInput("Enter your choice: ");
+
+            switch (choice) {
+
+                case 1:
+                    patientMenu();
+                    break;
+
+                case 2:
+                    emergencyQueueMenu();
+                    break;
+
+                case 3:
+                    treatmentStackMenu();
+                    break;
+
+                case 4:
+                    visitHistoryMenu();
+                    break;
+
+                case 5:
+                    System.out.println("\nThank you for using the system!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+
+        } while (choice != 5);
+
+        scanner.close();
+    }
+
+    // ================= MAIN MENU =================
+
+    public static void displayMainMenu() {
+
+        System.out.println("\n==============================================");
+        System.out.println(" MINI HOSPITAL EMERGENCY MANAGEMENT SYSTEM");
+        System.out.println("==============================================");
+        System.out.println("1. Patient Records (BST)");
+        System.out.println("2. Emergency Queue");
+        System.out.println("3. Treatment History (Stack)");
+        System.out.println("4. Patient Visit History (Linked List)");
+        System.out.println("5. Exit");
+        System.out.println("==============================================");
+    }
+
+    // ================= PATIENT BST MENU =================
+
+    public static void patientMenu() {
+
+        int choice;
+
+        do {
+
+            System.out.println("\n========== PATIENT RECORDS ==========");
+            System.out.println("1. Add New Patient");
+            System.out.println("2. Search Patient");
+            System.out.println("3. Delete Patient");
+            System.out.println("4. Display All Patients");
+            System.out.println("5. Back to Main Menu");
+
+            choice = getIntInput("Enter your choice: ");
+
+            switch (choice) {
+
+                case 1:
+                    addPatient();
+                    break;
+
+                case 2:
+                    searchPatient();
+                    break;
+
+                case 3:
+                    deletePatient();
+                    break;
+
+                case 4:
+                    patientBST.displayInOrder();
+                    break;
+
+                case 5:
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+
+        } while (choice != 5);
+    }
+
+    // Add patient
+    public static void addPatient() {
+
+        int patientId = getIntInput("Enter Patient ID: ");
+
+        if (patientBST.search(patientId) != null) {
+
+            System.out.println("Patient ID already exists.");
+            return;
+        }
+
+        System.out.print("Enter Patient Name: ");
+        String name = scanner.nextLine();
+
+        int age = getIntInput("Enter Age: ");
+
+        System.out.print("Enter Contact Number: ");
+        String contact = scanner.nextLine();
+
+        System.out.print("Enter Medical Condition: ");
+        String condition = scanner.nextLine();
+
+        Patient patient = new Patient(
+                patientId,
+                name,
+                age,
+                contact,
+                condition
         );
 
-        Patient p2 = new Patient(
-                101,
-                "Sara",
-                30,
-                "0772345678",
-                "Headache"
-        );
+        patientBST.insert(patient);
 
-        Patient p3 = new Patient(
-                110,
-                "Kamal",
-                45,
-                "0773456789",
-                "Chest Pain"
-        );
+        // Create visit history for this patient
+        if (patientId >= 0 && patientId < visitHistories.length) {
+            visitHistories[patientId] = new VisitLinkedList();
+        }
+    }
 
-        // BST testing
-        patientBST.insert(p1);
-        patientBST.insert(p2);
-        patientBST.insert(p3);
+    // Search patient
+    public static void searchPatient() {
 
-        System.out.println("\nPatients in ascending order:");
-        patientBST.displayInOrder();
+        int patientId = getIntInput("Enter Patient ID to search: ");
 
-        System.out.println("\nSearching Patient ID 101:");
+        Patient patient = patientBST.search(patientId);
 
-        Patient foundPatient = patientBST.search(101);
+        if (patient != null) {
 
-        if (foundPatient != null) {
-            foundPatient.displayPatient();
+            System.out.println("\nPatient found:");
+            patient.displayPatient();
+
         } else {
+
             System.out.println("Patient not found.");
         }
+    }
 
-        System.out.println("\nDeleting Patient ID 105:");
+    // Delete patient
+    public static void deletePatient() {
 
-        patientBST.delete(105);
+        int patientId = getIntInput("Enter Patient ID to delete: ");
 
-        System.out.println("\nPatients after deletion:");
-        patientBST.displayInOrder();
+        patientBST.delete(patientId);
+    }
 
+    // ================= EMERGENCY QUEUE MENU =================
 
-        // Queue testing
-        System.out.println("\n\n===== EMERGENCY QUEUE TEST =====");
+    public static void emergencyQueueMenu() {
 
-        EmergencyQueue emergencyQueue = new EmergencyQueue();
+        int choice;
 
-        emergencyQueue.enqueue(p1);
-        emergencyQueue.enqueue(p2);
-        emergencyQueue.enqueue(p3);
+        do {
 
-        emergencyQueue.displayQueue();
+            System.out.println("\n========== EMERGENCY QUEUE ==========");
+            System.out.println("1. Add Patient to Queue");
+            System.out.println("2. Treat Next Patient");
+            System.out.println("3. Display Waiting Patients");
+            System.out.println("4. Back to Main Menu");
 
-        System.out.println("\nTreating next patient:");
+            choice = getIntInput("Enter your choice: ");
 
-        Patient nextPatient = emergencyQueue.dequeue();
+            switch (choice) {
 
-        if (nextPatient != null) {
-            nextPatient.displayPatient();
+                case 1:
+                    addPatientToQueue();
+                    break;
+
+                case 2:
+                    treatNextPatient();
+                    break;
+
+                case 3:
+                    emergencyQueue.displayQueue();
+                    break;
+
+                case 4:
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+
+        } while (choice != 4);
+    }
+
+    // Add patient to emergency queue
+    public static void addPatientToQueue() {
+
+        int patientId = getIntInput("Enter Patient ID: ");
+
+        Patient patient = patientBST.search(patientId);
+
+        if (patient == null) {
+
+            System.out.println("Patient does not exist.");
+            System.out.println("Please register the patient first.");
+
+            return;
         }
 
-        System.out.println("\nRemaining patients:");
+        emergencyQueue.enqueue(patient);
+    }
 
-       // Stack testing
-System.out.println("\n\n===== TREATMENT STACK TEST =====");
+    // Treat next patient
+    public static void treatNextPatient() {
 
-TreatmentStack treatmentStack = new TreatmentStack();
+        Patient patient = emergencyQueue.dequeue();
 
-Treatment treatment1 = new Treatment(
-        1,
-        105,
-        "Ahmed",
-        "Dr. Perera",
-        "Medication given"
-);
+        if (patient == null) {
+            return;
+        }
 
-Treatment treatment2 = new Treatment(
-        2,
-        101,
-        "Sara",
-        "Dr. Silva",
-        "Blood test completed"
-);
+        System.out.println("\nTreating patient:");
+        patient.displayPatient();
 
-Treatment treatment3 = new Treatment(
-        3,
-        110,
-        "Kamal",
-        "Dr. Fernando",
-        "Emergency treatment completed"
-);
+        System.out.println("Treatment can now be completed and recorded.");
+    }
 
-treatmentStack.push(treatment1);
-treatmentStack.push(treatment2);
-treatmentStack.push(treatment3);
+    // ================= TREATMENT STACK MENU =================
 
-treatmentStack.displayStack();
+    public static void treatmentStackMenu() {
 
-System.out.println("\nRemoving latest treatment:");
+        int choice;
 
-Treatment removedTreatment = treatmentStack.pop();
+        do {
 
-if (removedTreatment != null) {
-    removedTreatment.displayTreatment();
+            System.out.println("\n========== TREATMENT HISTORY ==========");
+            System.out.println("1. Add Completed Treatment");
+            System.out.println("2. Remove Latest Treatment");
+            System.out.println("3. Display Treatment History");
+            System.out.println("4. Back to Main Menu");
+
+            choice = getIntInput("Enter your choice: ");
+
+            switch (choice) {
+
+                case 1:
+                    addTreatment();
+                    break;
+
+                case 2:
+                    removeLatestTreatment();
+                    break;
+
+                case 3:
+                    treatmentStack.displayStack();
+                    break;
+
+                case 4:
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+
+        } while (choice != 4);
+    }
+
+    // Add treatment
+    public static void addTreatment() {
+
+        int patientId = getIntInput("Enter Patient ID: ");
+
+        Patient patient = patientBST.search(patientId);
+
+        if (patient == null) {
+
+            System.out.println("Patient not found.");
+            return;
+        }
+
+        int treatmentId = getIntInput("Enter Treatment ID: ");
+
+        System.out.print("Enter Doctor Name: ");
+        String doctorName = scanner.nextLine();
+
+        System.out.print("Enter Treatment Details: ");
+        String treatmentDetails = scanner.nextLine();
+
+        Treatment treatment = new Treatment(
+                treatmentId,
+                patientId,
+                patient.getPatientName(),
+                doctorName,
+                treatmentDetails
+        );
+
+        treatmentStack.push(treatment);
+    }
+
+    // Remove latest treatment
+    public static void removeLatestTreatment() {
+
+        Treatment treatment = treatmentStack.pop();
+
+        if (treatment != null) {
+
+            System.out.println("\nRemoved Treatment:");
+            treatment.displayTreatment();
+        }
+    }
+
+    // ================= VISIT HISTORY MENU =================
+
+    public static void visitHistoryMenu() {
+
+        int patientId = getIntInput("Enter Patient ID: ");
+
+        Patient patient = patientBST.search(patientId);
+
+        if (patient == null) {
+
+            System.out.println("Patient not found.");
+            return;
+        }
+
+        if (patientId < 0 || patientId >= visitHistories.length) {
+
+            System.out.println("Invalid Patient ID for visit history.");
+            return;
+        }
+
+        if (visitHistories[patientId] == null) {
+            visitHistories[patientId] = new VisitLinkedList();
+        }
+
+        VisitLinkedList history = visitHistories[patientId];
+
+        int choice;
+
+        do {
+
+            System.out.println("\n========== VISIT HISTORY ==========");
+            System.out.println("Patient: " + patient.getPatientName());
+            System.out.println("1. Add Visit");
+            System.out.println("2. Search Visit");
+            System.out.println("3. Remove Visit");
+            System.out.println("4. Display Visit History");
+            System.out.println("5. Back to Main Menu");
+
+            choice = getIntInput("Enter your choice: ");
+
+            switch (choice) {
+
+                case 1:
+                    addVisit(history);
+                    break;
+
+                case 2:
+                    searchVisit(history);
+                    break;
+
+                case 3:
+                    removeVisit(history);
+                    break;
+
+                case 4:
+                    history.displayVisits();
+                    break;
+
+                case 5:
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+
+        } while (choice != 5);
+    }
+
+    // Add visit
+    public static void addVisit(VisitLinkedList history) {
+
+        int visitId = getIntInput("Enter Visit ID: ");
+
+        if (history.searchVisit(visitId) != null) {
+
+            System.out.println("Visit ID already exists.");
+            return;
+        }
+
+        System.out.print("Enter Visit Date: ");
+        String date = scanner.nextLine();
+
+        System.out.print("Enter Doctor Name: ");
+        String doctor = scanner.nextLine();
+
+        System.out.print("Enter Diagnosis: ");
+        String diagnosis = scanner.nextLine();
+
+        System.out.print("Enter Treatment: ");
+        String treatment = scanner.nextLine();
+
+        Visit visit = new Visit(
+                visitId,
+                date,
+                doctor,
+                diagnosis,
+                treatment
+        );
+
+        history.addVisit(visit);
+    }
+
+    // Search visit
+    public static void searchVisit(VisitLinkedList history) {
+
+        int visitId = getIntInput("Enter Visit ID to search: ");
+
+        Visit visit = history.searchVisit(visitId);
+
+        if (visit != null) {
+
+            System.out.println("\nVisit found:");
+            visit.displayVisit();
+
+        } else {
+
+            System.out.println("Visit not found.");
+        }
+    }
+
+    // Remove visit
+    public static void removeVisit(VisitLinkedList history) {
+
+        int visitId = getIntInput("Enter Visit ID to remove: ");
+
+        history.removeVisit(visitId);
+    }
+
+    // ================= INPUT METHOD =================
+
+    public static int getIntInput(String message) {
+
+        while (true) {
+
+            try {
+
+                System.out.print(message);
+
+                int value = Integer.parseInt(scanner.nextLine());
+
+                return value;
+
+            } catch (NumberFormatException e) {
+
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
 }
-
-System.out.println("\nTreatment history after pop:");
-
-treatmentStack.displayStack();
-   // Linked List testing
-System.out.println("\n\n===== PATIENT VISIT HISTORY TEST =====");
-
-VisitLinkedList visitHistory = new VisitLinkedList();
-
-Visit visit1 = new Visit(
-        1,
-        "2026-09-01",
-        "Dr. Perera",
-        "Fever",
-        "Medication"
-);
-
-Visit visit2 = new Visit(
-        2,
-        "2026-09-03",
-        "Dr. Silva",
-        "Headache",
-        "Pain relief tablets"
-);
-
-Visit visit3 = new Visit(
-        3,
-        "2026-09-05",
-        "Dr. Fernando",
-        "Chest Pain",
-        "ECG and observation"
-);
-
-visitHistory.addVisit(visit1);
-visitHistory.addVisit(visit2);
-visitHistory.addVisit(visit3);
-
-visitHistory.displayVisits();
-
-System.out.println("\nSearching for Visit ID 2:");
-
-Visit foundVisit = visitHistory.searchVisit(2);
-
-if (foundVisit != null) {
-    foundVisit.displayVisit();
-} else {
-    System.out.println("Visit not found.");
-}
-
-System.out.println("\nRemoving Visit ID 1:");
-
-visitHistory.removeVisit(1);
-
-System.out.println("\nVisit history after removal:");
-
-visitHistory.displayVisits();}}
