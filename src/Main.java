@@ -121,4 +121,55 @@ if (removedTreatment != null) {
 System.out.println("\nTreatment history after pop:");
 
 treatmentStack.displayStack();
-    }}
+   // Linked List testing
+System.out.println("\n\n===== PATIENT VISIT HISTORY TEST =====");
+
+VisitLinkedList visitHistory = new VisitLinkedList();
+
+Visit visit1 = new Visit(
+        1,
+        "2026-09-01",
+        "Dr. Perera",
+        "Fever",
+        "Medication"
+);
+
+Visit visit2 = new Visit(
+        2,
+        "2026-09-03",
+        "Dr. Silva",
+        "Headache",
+        "Pain relief tablets"
+);
+
+Visit visit3 = new Visit(
+        3,
+        "2026-09-05",
+        "Dr. Fernando",
+        "Chest Pain",
+        "ECG and observation"
+);
+
+visitHistory.addVisit(visit1);
+visitHistory.addVisit(visit2);
+visitHistory.addVisit(visit3);
+
+visitHistory.displayVisits();
+
+System.out.println("\nSearching for Visit ID 2:");
+
+Visit foundVisit = visitHistory.searchVisit(2);
+
+if (foundVisit != null) {
+    foundVisit.displayVisit();
+} else {
+    System.out.println("Visit not found.");
+}
+
+System.out.println("\nRemoving Visit ID 1:");
+
+visitHistory.removeVisit(1);
+
+System.out.println("\nVisit history after removal:");
+
+visitHistory.displayVisits();}}
