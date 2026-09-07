@@ -75,6 +75,50 @@ public class Main {
 
         System.out.println("\nRemaining patients:");
 
-        emergencyQueue.displayQueue();
-    }
+       // Stack testing
+System.out.println("\n\n===== TREATMENT STACK TEST =====");
+
+TreatmentStack treatmentStack = new TreatmentStack();
+
+Treatment treatment1 = new Treatment(
+        1,
+        105,
+        "Ahmed",
+        "Dr. Perera",
+        "Medication given"
+);
+
+Treatment treatment2 = new Treatment(
+        2,
+        101,
+        "Sara",
+        "Dr. Silva",
+        "Blood test completed"
+);
+
+Treatment treatment3 = new Treatment(
+        3,
+        110,
+        "Kamal",
+        "Dr. Fernando",
+        "Emergency treatment completed"
+);
+
+treatmentStack.push(treatment1);
+treatmentStack.push(treatment2);
+treatmentStack.push(treatment3);
+
+treatmentStack.displayStack();
+
+System.out.println("\nRemoving latest treatment:");
+
+Treatment removedTreatment = treatmentStack.pop();
+
+if (removedTreatment != null) {
+    removedTreatment.displayTreatment();
 }
+
+System.out.println("\nTreatment history after pop:");
+
+treatmentStack.displayStack();
+    }}
