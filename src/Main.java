@@ -28,6 +28,7 @@ public class Main {
                 "Chest Pain"
         );
 
+        // BST testing
         patientBST.insert(p1);
         patientBST.insert(p2);
         patientBST.insert(p3);
@@ -41,8 +42,7 @@ public class Main {
 
         if (foundPatient != null) {
             foundPatient.displayPatient();
-        }
-        else {
+        } else {
             System.out.println("Patient not found.");
         }
 
@@ -52,5 +52,29 @@ public class Main {
 
         System.out.println("\nPatients after deletion:");
         patientBST.displayInOrder();
+
+
+        // Queue testing
+        System.out.println("\n\n===== EMERGENCY QUEUE TEST =====");
+
+        EmergencyQueue emergencyQueue = new EmergencyQueue();
+
+        emergencyQueue.enqueue(p1);
+        emergencyQueue.enqueue(p2);
+        emergencyQueue.enqueue(p3);
+
+        emergencyQueue.displayQueue();
+
+        System.out.println("\nTreating next patient:");
+
+        Patient nextPatient = emergencyQueue.dequeue();
+
+        if (nextPatient != null) {
+            nextPatient.displayPatient();
+        }
+
+        System.out.println("\nRemaining patients:");
+
+        emergencyQueue.displayQueue();
     }
 }
